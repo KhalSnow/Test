@@ -1,0 +1,8 @@
+{
+  "apps": [{
+    "name": "supervision",
+    "script": "./bin/www",
+    "cwd": "/home/wangyh/Supervision/BackEnd",
+    "exec_mode": "fork_mode"
+  }]
+}
