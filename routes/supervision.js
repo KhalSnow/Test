@@ -6,6 +6,7 @@ var db = require('./db');
 router.post('/enable', async function(req, res, next) {
 	var sql = 'update domain set enable=? where id=?';
 	var params = [req.body.enable, req.body.id];
+	console.log(params);
 	await db.query(sql, params);
 	res.json({status:0, msg:'Update successfully.', data: req.body.enable});
 })

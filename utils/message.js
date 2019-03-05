@@ -24,7 +24,7 @@ module.exports.send_sms = async function(uri,account,password,phone,msg){
 	console.log(post_data);
 	var content = post_data;
 	//var content = JSON.stringify(post_data);
-	post(uri, content);
+	await post(uri, content);
 }
 
 async function post(uri, content) {

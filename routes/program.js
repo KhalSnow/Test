@@ -1,0 +1,64 @@
+var express = require('express');
+var router = express.Router();
+var db = require('./db');
+
+/* Add info. */
+router.post('/add', async function(req, res, next) {
+	var sql = 'insert into domain(domain, intervals, member, maximum, enable, program, tag) values(?,?,?,?,?,?,?)';
+	var params = [];
+	params.push(req.body.domain, req.body.intervals, req.body.member, req.body.maximum, '0', req.body.program, req.body.tag);
+	var data = await db.query(sql, params);
+	res.json({status:0, msg:'Add successfully.'});
+})
+
+/* Get info.
+router.get('/get', async function(req, res, next) {
+	var sql2 = 'select * from domain where program = ?';
+	var data2 = await db.query(sql2, [req.query.program]);
+	res.json({status:0, data:data2});
+})*/
+
+/* Delete info. */
+router.post('/delete', async function(req, res, next) {
+	var sql = 'delete from domain where id=?';
+	var params = [req.body.id];
+	console.log(req.body.id);
+	var data = await db.query(sql, params);
+	res.json({status:0, msg:'Delete successfully.'});
+})
+
+/* Edit info. */
+router.post('/edit', async function(req, res, next) {
+	var sql = 'update domain set domain=?, intervals=?, member=?, maximum=?, program=?, tag=?, enable=? where id=?';
+	var params = []
+	params.push(req.body.domain, req.body.intervals, req.body.member, req.body.maximum, req.body.program, req.body.tag, '0', req.body.id);
+	var data = await db.query(sql, params);
+	res.json({status:0, msg:'Update Successfully.'});
+})
+
+/* Get program. */
+router.post('/selected', async function(req, res, next) {
+    var sql1 = 'select count(*) as count from domain where program=?';
+	var sql2 = 'select * from domain where program=?';
+	var params = [req.body.program];
+	var data1 = await db.query(sql1, params);
+	console.log(data1);
+	sql2 += ' limit 10';
+	var data2 = await db.query(sql2, params);
+	console.log(data2);
+	res.json({status:0, data:[data1[0].count, data2]});
+})
+
+/* Get each page's contents. */
+router.post('/page', async function(req, res, next) {
+	var sql1 = 'select count(*) as count from domain where program=?';
+	var sql2 = 'select * from domain where program=?';
+	var params = [req.body.program];
+	var data1 = await db.query(sql1, params);
+	sql2 += ' limit ? offset ?';
+	params.push(parseInt(req.body.pageSize), (req.body.currentPage-1)*req.body.pageSize);
+	var data2 = await db.query(sql2, params);
+	res.json({status:0, data:[data1[0].count, data2]});
+})
+
+module.exports = router;
