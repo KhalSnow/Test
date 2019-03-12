@@ -5,7 +5,7 @@ var md5 = require('md5-node');
 
 /* Check name and password. */
 router.post('/login', async function(req, res, next) {
-	//console.log(req.headers.token);
+	console.log(req.headers.token);
 	//console.log(req.body);
 	var sql1 = 'select * from login where username=? and password=?';
 	var params1 = [];
