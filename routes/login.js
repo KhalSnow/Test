@@ -19,7 +19,7 @@ router.post('/login', async function(req, res, next) {
 		req.session.username = req.body.username;
 		req.session.login = true;
 		var result = true;
-		res.json({status:0, data:[result, token]});
+		res.json({status:0, data:[result, token, data[0].role]});
 	} else {
 		req.session.login = false;
 		var result = false;
