@@ -7,17 +7,17 @@ router.post('/selected', async function(req, res, next) {
     var sql1 = 'select count(*) as count from result where program=?';
 	var sql2 = 'select * from result where program=?';
 	var params = [req.body.program];
-	console.log(params);
+	//console.log(params);
 	var data1 = await db.query(sql1, params);
 	sql2 += ' order by tt desc limit 10';
 	var data2 = await db.query(sql2, params);
-	console.log(data2);
+	//console.log(data2);
 	res.json({status:0, data:[data1[0].count, data2]});
 })
 
 /* Get each page's contents. */
 router.post('/page', async function(req, res, next) {
-	console.log(req.body);
+	//console.log(req.body);
 	var sql1 = 'select count(*) as count from result where program=?';
 	var sql2 = 'select * from result where program=?';
 	var params = [];
@@ -28,12 +28,12 @@ router.post('/page', async function(req, res, next) {
 		params.push(req.body.Domain);
 	}
 	var data1 = await db.query(sql1, params);
-	console.log(data1);
+	//console.log(data1);
 	sql2 += ' order by tt desc';
 	sql2 += ' limit ? offset ?';
 	params.push(parseInt(req.body.pageSize), (req.body.currentPage-1)*req.body.pageSize);
 	var data2 = await db.query(sql2, params);
-	console.log(data2);
+	//console.log(data2);
 	res.json({status:0, data:[data1[0].count, data2]});
 })
 

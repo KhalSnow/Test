@@ -38,15 +38,24 @@ router.post('/edit', async function(req, res, next) {
 
 /* Get program. */
 router.post('/selected', async function(req, res, next) {
-    var sql1 = 'select count(*) as count from domain where program=?';
-	var sql2 = 'select * from domain where program=?';
-	var params = [req.body.program];
-	var data1 = await db.query(sql1, params);
-	console.log(data1);
-	sql2 += ' limit 10';
-	var data2 = await db.query(sql2, params);
-	console.log(data2);
-	res.json({status:0, data:[data1[0].count, data2]});
+	var sql = 'select * from login where token=?';
+	var data = await db.query(sql, [req.headers.token]);
+	//console.log(data);
+	if (data.length == 0) {
+		res.json({status:1, msg:'not log in'});
+	} else if (Number(new Date()) > data.expired) {
+		res.json({status:2, msg:'expired'});
+	} else {
+		var sql1 = 'select count(*) as count from domain where program=?';
+		var sql2 = 'select * from domain where program=?';
+		var params = [req.body.program];
+		var data1 = await db.query(sql1, params);
+		//console.log(data1);
+		sql2 += ' limit 10';
+		var data2 = await db.query(sql2, params);
+		//console.log(data);
+		res.json({status:0, data:[data1[0].count, data2], msg:'log in'});
+	}
 })
 
 /* Get each page's contents. */

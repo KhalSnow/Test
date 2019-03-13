@@ -6,11 +6,11 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 
-var index = require('./routes/index');
 var login = require('./routes/login');
 var supervision = require('./routes/supervision');
 var program = require('./routes/program');
 var result = require('./routes/result');
+var logout = require('./routes/Logout');
 //var message = require('./routes/message');
 
 var app = express();
@@ -52,11 +52,11 @@ app.use(function(req, res, next){
 	}
 }); */
 
-app.use('/', index);
 app.use('/login', login);
 app.use('/supervision', supervision);
 app.use('/program', program);
 app.use('/result', result);
+app.use('/logout', logout);
 //app.use('/msg', message);
 
 // catch 404 and forward to error handler
