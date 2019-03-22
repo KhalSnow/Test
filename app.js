@@ -7,7 +7,6 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 
 var login = require('./routes/login');
-var supervision = require('./routes/supervision');
 var program = require('./routes/program');
 var result = require('./routes/result');
 var logout = require('./routes/Logout');
@@ -54,7 +53,6 @@ app.use(function(req, res, next){
 }); */
 
 app.use('/login', login);
-app.use('/supervision', supervision);
 app.use('/program', program);
 app.use('/result', result);
 app.use('/logout', logout);

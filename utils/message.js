@@ -19,11 +19,10 @@ module.exports.send_sms = async function(uri,account,password,phone,msg){
 		"password": password,
 		"phone": phone,
 		"msg": msg,
-		//"report": "true"
+		"report": true
 	};
 	console.log(post_data);
 	var content = post_data;
-	//var content = JSON.stringify(post_data);
 	await post(uri, content);
 }
 

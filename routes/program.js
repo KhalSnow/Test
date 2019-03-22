@@ -22,7 +22,6 @@ router.get('/get', async function(req, res, next) {
 router.post('/delete', async function(req, res, next) {
 	var sql = 'delete from domain where id=?';
 	var params = [req.body.id];
-	console.log(req.body.id);
 	var data = await db.query(sql, params);
 	res.json({status:0, msg:'Delete successfully.'});
 })
@@ -53,7 +52,14 @@ router.post('/selected', async function(req, res, next) {
 		//console.log(data1);
 		sql2 += ' limit 10';
 		var data2 = await db.query(sql2, params);
-		//console.log(data);
+		for (let i=0; i<data2.length; i++) {
+			if (data2[i].enable == '1') {
+				data2[i].enable = true;
+			} else {
+				data2[i].enable = false;
+			}
+		}
+		console.log(data2);
 		res.json({status:0, data:[data1[0].count, data2], msg:'log in'});
 	}
 })
@@ -70,4 +76,14 @@ router.post('/page', async function(req, res, next) {
 	res.json({status:0, data:[data1[0].count, data2]});
 })
 
+/* Update enable and tt. */
+router.post('/enable', async function(req, res, next) {
+	var sql = 'update domain set enable=? where id=?';
+	var params = [req.body.enable, req.body.id];
+	console.log(req.body.enable);
+	var data = await db.query(sql, params);
+	res.json({status:0, msg:'Update successfully.', data: req.body.enable});
+})
+
 module.exports = router;
+

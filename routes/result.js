@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var db = require('./db');
+var moment = require('moment');
 
 /* Get result. */
 router.post('/selected', async function(req, res, next) {
@@ -11,6 +12,9 @@ router.post('/selected', async function(req, res, next) {
 	var data1 = await db.query(sql1, params);
 	sql2 += ' order by tt desc limit 10';
 	var data2 = await db.query(sql2, params);
+	//for (let i=0; i<data2.length; i++) {
+	//	data2[i].tt = moment().format("YYYY-MM-DD hh:mm:ss", data2[i].tt);
+	//}
 	//console.log(data2);
 	res.json({status:0, data:[data1[0].count, data2]});
 })

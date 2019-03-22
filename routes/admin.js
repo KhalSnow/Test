@@ -5,11 +5,10 @@ var db = require('./db');
 /* Get menu. */
 router.get('/get', async function(req, res, next) {
 	var sql = 'select * from program';
-	var data = await db.query(sql, []);	
+	var data = await db.query(sql, []);
 	for( let i=0; i<data.length; i++ ) {
 		data[i].route = '/program?type=' + data[i].id;
 	}
-	console.log(data);
 	res.json({status:0, data:data});
 })
 
@@ -42,6 +41,20 @@ router.post('/delete', async function(req, res, next) {
 	} else {
 		res.json({status:1, msg:'Can not delete.'})
 	}
+})
+
+/* Get each page's contents. */
+router.get('/page', async function(req, res, next) {
+	var sql1 = 'select count(*) as count from program';
+	var sql2 = 'select * from program limit ? offset ?';
+	var params2 = [];
+	params2.push(parseInt(req.query.pageSize), (req.query.currentPage-1)*req.query.pageSize);
+	var data1 = await db.query(sql1, []);
+	var data2 = await db.query(sql2, params2);
+	for( let i=0; i<data2.length; i++ ) {
+		data2[i].route = '/program?type=' + data2[i].id;
+	}
+	res.json({status:0, data:[data1[0].count, data2]});
 })
 
 module.exports = router;

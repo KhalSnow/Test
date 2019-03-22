@@ -82,9 +82,21 @@ async function manipulation(body, statusCode, url, domain, maximum, phone, progr
 	} else if (statusCode == 500 ) {
 		var sql3 = 'insert into result(domain, code, msg, program) values (?,?,?,?)';
 		var params3 = [url, 2, '服务器宕机'];
-		await db.query(sql3, params3);
-		var mes = " 因服务器宕机停止使用，"
-		await send_message(url, mes, phone);
+		var data3 = await db.query(sql3, params3);
+		if (data3.length < maximum) {
+			var mes = " 因服务器宕机停止使用，";
+			await send_message(url, mes, phone);
+		} else {
+			for (let i=0; i<maximum; i++) {
+				if (data3[i].code != 2) {
+					var mes = " 因服务器宕机停止使用，";
+					await send_message(url, mes, phone);
+					break;
+				} else {
+					continue;
+				}
+			}
+		}
 	}
 }
 
