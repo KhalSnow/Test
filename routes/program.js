@@ -85,5 +85,12 @@ router.post('/enable', async function(req, res, next) {
 	res.json({status:0, msg:'Update successfully.', data: req.body.enable});
 })
 
+/* Get tag suggestions. */
+router.get('/tag', async function(req, res, next) {
+	var sql = 'select distinct(tag) as value from domain';
+	var data = await db.query(sql, []);
+	res.json({status:0, data:data});
+})
+
 module.exports = router;
 
