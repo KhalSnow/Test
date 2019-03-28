@@ -1,6 +1,5 @@
 var request = require('request-promise');
 
-//send_sms(uri,account,password,phone,msg);
 // 发送短信方法
 module.exports.send_sms = async function(account,password,msg,params,uri){
 	var post_data = { // 这是需要提交的数据
@@ -12,10 +11,10 @@ module.exports.send_sms = async function(account,password,msg,params,uri){
 	};
 	console.log(post_data);
 	var content = post_data;
-	var data = await post(uri, content);
+	await post(content,uri);
 }
 
-async function post(uri, content) {
+async function post(content,uri) {
 	var options = {
 		url: uri,
 		method: 'POST',
@@ -31,7 +30,7 @@ async function post(uri, content) {
 			console.log(err);
 		}
 		console.log('STATUS: ' + response.statusCode);
-		//console.log(body);
+		console.log(body);
 	});
 }
 
