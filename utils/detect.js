@@ -61,39 +61,48 @@ async function manipulation(body, statusCode, url, domain, maximum, phone, progr
 				await send_message(programName, phone, message, url);
 				await updateStatus(Status2, domain);
 			} else {
+				var flag = false;
 				for (let i=0; i<maximum; i++) {
 					if (data[i].code != 1) {
-						var message = "被阿里云限制访问";
-						await send_message(programName, phone, message, url);
-						await updateStatus(Status2, domain);
+						flag = true;
 						break;
 					} else {
 						continue;
 					}
 				}
-				await setEnable(domain);
+				if (flag) {
+					var message = "被阿里云限制访问";
+					await send_message(programName, phone, message, url);
+					await insertResult(url, code2, Status2, program);
+					await updateStatus(Status2, domain);
+				} else {
+					await insertResult(url, code2, Status2, program);
+					await updateStatus(Status2, domain);
+					await setEnable(domain);
+				}
 			}
 		}
 	} else if (statusCode == 500 ) {
 		var Status3 = '服务器宕机';
 		var code3 = 2;
-		await insertResult(url, code3, Status3, program);
 		if (data.length < maximum) {
 			var message = "因服务器宕机停止使用";
+			await insertResult(url, code3, Status3, program);
 			await send_message(programName, phone, message, url);
 			await updateStatus(Status3, domain);
 		} else {
 			for (let i=0; i<maximum; i++) {
 				if (data6[i].code != 2) {
 					var message = "因服务器宕机停止使用";
+					await insertResult(url, code3, Status3, program);
 					await send_message(programName, phone, message, url);
 					await updateStatus(Status3, domain);
 					break;
 				} else {
 					continue;
 				}
+				await setEnable(domain);
 			}
-			await setEnable(domain);
 		}
 	}
 }
