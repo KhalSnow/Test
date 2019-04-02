@@ -44,54 +44,77 @@ async function profile(url, domain) {
 
 async function manipulation(body, statusCode, url, domain, maximum, phone, program, programName) {
 	if (statusCode == 200) {
-		var sql1 = 'insert into result(domain, code, msg, program) values (?,?,?,?)';
-		var params1 = [url, 0, '正常访问', program];
-		var data1 = await db.query(sql1, params1);
-		console.log('code:200', statusCode);
+		var Status1 = '正常访问';
+		var code1 = 0;
+		await insertResult(url, code1, Status1, program);
+		await updateStatus(Status1, domain);
 	} else if (statusCode == 403) {
 		if (body.search('http://batit.aliyun.com/alww.html') != -1) {
-			var sql2 = 'insert into result(domain, code, msg, program) values (?,?,?,?)';
-			var params2 = [url, 1, '限制访问', program];
-			var data2 = await db.query(sql2, params2);
-			var sql4 = 'select * from result where domain = ? order by tt desc limit ?';
-			var params4 = [url, maximum];
-			var data4 = await db.query(sql4, params4);
-			if (data4.length < maximum) {
-				console.log('code:403',statusCode);
+			var Status2 = '限制访问';
+			var code2 = 1;
+			var sql = 'select * from result where domain = ? order by tt desc limit ?';
+			var params = [url, maximum];
+			var data = await db.query(sql, params);
+			if (data.length < maximum) {
 				var message = "被阿里云限制访问";
+				await insertResult(url, code2, Status2, program);
 				await send_message(programName, phone, message, url);
+				await updateStatus(Status2, domain);
 			} else {
 				for (let i=0; i<maximum; i++) {
-					if (data4[i].code != 1) {
+					if (data[i].code != 1) {
 						var message = "被阿里云限制访问";
-						console.log('code,403', statusCode);
 						await send_message(programName, phone, message, url);
+						await updateStatus(Status2, domain);
 						break;
 					} else {
 						continue;
 					}
 				}
+				await setEnable(domain);
 			}
 		}
 	} else if (statusCode == 500 ) {
-		var sql3 = 'insert into result(domain, code, msg, program) values (?,?,?,?)';
-		var params3 = [url, 2, '服务器宕机'];
-		var data3 = await db.query(sql3, params3);
-		if (data3.length < maximum) {
+		var Status3 = '服务器宕机';
+		var code3 = 2;
+		await insertResult(url, code3, Status3, program);
+		if (data.length < maximum) {
 			var message = "因服务器宕机停止使用";
 			await send_message(programName, phone, message, url);
+			await updateStatus(Status3, domain);
 		} else {
 			for (let i=0; i<maximum; i++) {
-				if (data3[i].code != 2) {
+				if (data6[i].code != 2) {
 					var message = "因服务器宕机停止使用";
 					await send_message(programName, phone, message, url);
+					await updateStatus(Status3, domain);
 					break;
 				} else {
 					continue;
 				}
 			}
+			await setEnable(domain);
 		}
 	}
+}
+
+async function insertResult(url, code, Status, program) {
+	var sql = 'insert into result(domain, code, msg, program) values (?,?,?,?)';
+	var params = [url, code, Status, program];
+	var data = await db.query(sql, params);
+	return data;
+}
+
+async function updateStatus(Status, domain) {
+	var sql = 'update domain set status=? where domain=?';
+	var data = await db.query(sql, [Status, domain]);
+	return data;
+}
+
+async function setEnable(domain) {
+	var sql = 'update domain set enable=0 where domain=?';
+	var data = await db.query(sql, [domain]);
+	return data;
 }
 
 async function main() {
