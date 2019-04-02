@@ -44,13 +44,13 @@ async function profile(url, domain) {
 
 async function manipulation(body, statusCode, url, domain, maximum, phone, program, programName) {
 	if (statusCode == 200) {
-		var Status1 = '正常访问';
+		var Status1 = 0;
 		var code1 = 0;
 		await insertResult(url, code1, Status1, program);
 		await updateStatus(Status1, domain);
 	} else if (statusCode == 403) {
 		if (body.search('http://batit.aliyun.com/alww.html') != -1) {
-			var Status2 = '限制访问';
+			var Status2 = 1;
 			var code2 = 1;
 			var sql = 'select * from result where domain = ? order by tt desc limit ?';
 			var params = [url, maximum];
@@ -83,7 +83,7 @@ async function manipulation(body, statusCode, url, domain, maximum, phone, progr
 			}
 		}
 	} else if (statusCode == 500 ) {
-		var Status3 = '服务器宕机';
+		var Status3 = 2;
 		var code3 = 2;
 		if (data.length < maximum) {
 			var message = "因服务器宕机停止使用";
