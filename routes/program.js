@@ -11,13 +11,6 @@ router.post('/add', async function(req, res, next) {
 	res.json({status:0, msg:'Add successfully.'});
 })
 
-/* Get info.
-router.get('/get', async function(req, res, next) {
-	var sql2 = 'select * from domain where program = ?';
-	var data2 = await db.query(sql2, [req.query.program]);
-	res.json({status:0, data:data2});
-})*/
-
 /* Delete info. */
 router.post('/delete', async function(req, res, next) {
 	var sql = 'delete from domain where id=?';
