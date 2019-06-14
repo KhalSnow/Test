@@ -4,14 +4,10 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('express-session');
+var jwt = require('jsonwebtoken');
+var secretkey = 'secretkey';
 
-var login = require('./routes/login');
-var program = require('./routes/program');
-var result = require('./routes/result');
-var logout = require('./routes/Logout');
-var admin = require('./routes/admin');
-//var message = require('./routes/message');
+var login = require('./routes/user');
 
 var app = express();
 
@@ -28,36 +24,31 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'yfax', resave:false, saveUninitialized:false, cookie: {maxAge:30*60000}}));
 
-app.use(function(req, res, next){
-	console.log(req.header);
-	console.log(req.session.login);
+app.all("*", function(req, res, next) {
+	res.header("Access-Control-Allow-Credentials", true);
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+	res.header("Content-Type", "application/json;charset=utf-8");
 	next();
-})
+});
 
-/* app.use(function(req, res, next){
-    if (req.session.login != 'true') {
-		if (req.url.indexOf("/login") > -1) {
-			next();
-		}
-	}
-	if (loginApiList.includes(url)) {
-		if (!req.session.username) {
-    		res.json({
-				code: 401,
-				msg: '未登录'
-			})
-		}
-	} else {
+app.use(function(req, res, next){
+	if(req.url != '/user/login' && req.url != '/user/register') {
+		let token = req.body.token || req.query.token || req.headers.token;
+		jwt.verify(token, secretkey, function(err, decode) {
+			if(err){
+				res.json({ message: 'token过期，请重新登录', resultCode: '403' })
+			} else{
+				next();
+			}
+		})
+	} else{
 		next();
 	}
-}); */
+})
 
-app.use('/login', login);
-app.use('/program', program);
-app.use('/result', result);
-app.use('/logout', logout);
-app.use('/admin', admin);
-//app.use('/msg', message);
+app.use('/user', user);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

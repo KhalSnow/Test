@@ -3,7 +3,7 @@ var pool = mysql.createPool({
 	host : 'localhost',
 	user : 'wangyh',
 	password : 'wangyh',
-	database : 'supervision',
+	database : 'test',
 	charset : 'utf8',
 	insecureAuth: true
 });
