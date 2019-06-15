@@ -52,19 +52,41 @@ router.post('/login', async function(req, res, next) {
 })
 
 //拉取用户列表
-router.get('getuser', async function(req, res, next) {
-	var sql = 'select * from user where 1=1';
-	var params = [];
-	if (req.query.username) {
-		sql += ' and username = ?';
-		params.push(req.query.username);
+router.get('/getuser', async function(req, res, next) {
+	var role = req.query.role;
+	var token = req.query.token;
+	//role为1表示管理员身份，0表示普通用户身份
+	if (role == 0) {
+		var sql1 = 'select * from user where token=?';
+		var params1 = [token];
+		var data1 = await db.query(sql1, params1);
+		if (data1.length != 0) {
+			res.json({
+				message: '查找成功',
+				resultCode: 0,
+				data: data1
+			});
+		} else {
+			res.json({
+				message: '查找失败，未找到',
+				resultCode: 1
+			});
+		}
 	}
-	var data = await db.query(sql, params);
-	res.json({
-		message: '请求成功',
-		resultCode: 0,
-		data: data
-	});
+	if (role == 1) {
+		var sql2 = 'select * from user where 1=1';
+		var params2 = [];
+		if (token) {
+			sql2 += ' and token=?';
+			params2.push(token);
+		}
+		var data2 = await db.query(sql2, params2);
+		res.json({
+			message: '请求成功',
+			resultCode: 0,
+			data: data2
+		});
+	}
 })
 
 //用户注册
